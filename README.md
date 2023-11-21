@@ -1,1 +1,30 @@
 # Meltdown
+
+
+## System Requirements 
+- x86 processor
+- linux machine, kernel version 5.x
+
+## Setup
+
+
+```
+// Goto
+sudo vim /etc/default/grub
+```
+Append `pti=off` and `nokaslr` to the end of the variable `GRUB_CMDLINE_LINUX_DEFAULT`
+
+```
+// cd back to repo
+$ make
+$ sudo insmod MeltdownKernel.ko
+$ sudo dmesg | grep "secret"
+
+/* 
+   copy and paste address in meltdown.c 
+   where meltdown_attack is first called
+*/
+
+$ gcc Meltdown.c
+$ ./a.out
+```
