@@ -4,7 +4,10 @@ This project is for the class CSE System Cyber Security.
 
 ## System Requirements 
 - x86 processor
-- linux machine, kernel version 5.x
+- linux machine
+
+> :warning: **original testing on a linx kerenl 5.4.x machine
+**
 
 ## Setup
 

