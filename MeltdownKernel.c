@@ -53,5 +53,6 @@ static __exit void test_proc_cleanup(void)
    remove_proc_entry("secret_data", NULL);
 }
 
+MODULE_LICENSE("GPL");
 module_init(test_proc_init);
 module_exit(test_proc_cleanup);
